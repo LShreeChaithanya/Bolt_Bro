@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Wand2 } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Wand2 } from "lucide-react";
+import axios from "axios";
 
 const HomePage = () => {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    axios
+      .post("http://localhost:3001/template", {
+        prompt: "Hello from frontend!",
+      })
+      .then((res) => setData(res.data))
+      .catch((err) => console.error("Error fetching data:", err));
+  }, []);
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
-      navigate('/builder', { state: { prompt } });
+      navigate("/builder", { state: { prompt } });
     }
   };
 
@@ -20,11 +31,18 @@ const HomePage = () => {
           <h1 className="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
             What do you want to build?
           </h1>
-          <p className="text-gray-400 mb-8 text-lg animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <p
+            className="text-gray-400 mb-8 text-lg animate-slide-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             Prompt, run, write and deploy full-stack web apps.
           </p>
-          
-          <form onSubmit={handleSubmit} className="mb-12 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mb-12 animate-slide-up"
+            style={{ animationDelay: "0.4s" }}
+          >
             <div className="relative group">
               <input
                 type="text"
@@ -46,13 +64,15 @@ const HomePage = () => {
             </div>
           </form>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400 animate-slide-up"
-               style={{ animationDelay: '0.6s' }}>
+          <div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-400 animate-slide-up"
+            style={{ animationDelay: "0.6s" }}
+          >
             {[
-              'Build a mobile app with React Native',
-              'Create a docs site with Typescript',
-              'Build a portfolio with Next.js',
-              'Create a blog with Remix'
+              "Build a mobile app with React Native",
+              "Create a docs site with Typescript",
+              "Build a portfolio with Next.js",
+              "Create a blog with Remix",
             ].map((text, index) => (
               <div
                 key={index}
