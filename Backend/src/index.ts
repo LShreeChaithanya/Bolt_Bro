@@ -30,11 +30,11 @@ app.post("/template", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: prompt,
+            content: `Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.${prompt}`,
           },
         ],
-        system:
-          "Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.",
+        // system:
+        //   "Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.",
         temperature: 0.2,
         max_tokens: 100,
       }),
@@ -43,8 +43,8 @@ app.post("/template", async (req, res) => {
   const data = await response.json();
   //console.log(JSON.stringify(data.choices[0].message, null, 2));
 
-  //console.log("Reasoning: " + data.choices[0].message.reasoning);
-  //console.log("Content: " + data.choices[0].message.content);
+  console.log("Reasoning: " + data.choices[0].message.reasoning);
+  console.log("Content: " + data.choices[0].message.content);
 
   const answer = data.choices[0].message.content.trim().toLowerCase();
   console.log(answer);
