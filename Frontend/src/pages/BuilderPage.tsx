@@ -32,149 +32,36 @@ const BuilderPage = () => {
             { 
               name: 'Header.tsx',
               type: 'file',
-              content: `import React from 'react';
-
-interface HeaderProps {
-  title: string;
-  description?: string;
-}
-
-const Header: React.FC<HeaderProps> = ({ title, description }) => {
-  return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-2">{title}</h1>
-        {description && <p className="text-lg opacity-90">{description}</p>}
-      </div>
-    </header>
-  );
-};
-
-export default Header;`
+              content: ``
             },
             { 
               name: 'Footer.tsx',
               type: 'file',
-              content: `import React from 'react';
-
-const Footer: React.FC = () => {
-  const year = new Date().getFullYear();
-
-  return (
-    <footer className="bg-gray-900 text-white py-6">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center">
-          <p>&copy; {year} Your Company. All rights reserved.</p>
-          <div className="space-x-4">
-            <a href="#" className="hover:text-blue-400">Terms</a>
-            <a href="#" className="hover:text-blue-400">Privacy</a>
-            <a href="#" className="hover:text-blue-400">Contact</a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-};
-
-export default Footer;`
+              content: ``
             },
           ]
         },
         { 
           name: 'App.tsx',
           type: 'file',
-          content: `import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-
-function App() {
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header 
-        title="Welcome to Our Platform"
-        description="Build amazing web applications with ease"
-      />
-      
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-4">Featured Content</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Add your content here */}
-        </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
-}
-
-export default App;`
+          content: ``
         },
         { 
           name: 'main.tsx',
           type: 'file',
-          content: `import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-// Create root element
-const rootElement = document.getElementById('root');
-if (!rootElement) throw new Error('Failed to find root element');
-
-// Create root
-const root = createRoot(rootElement);
-
-// Render app
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);`
+          content: ``
         },
       ]
     },
     { 
       name: 'package.json',
       type: 'file',
-      content: `{
-  "name": "my-react-app",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "typescript": "^5.0.0",
-    "vite": "^4.0.0"
-  }
-}`
+      content: ``
     },
     { 
       name: 'index.html',
       type: 'file',
-      content: `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React Application</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>`
+      content: ``
     },
   ]);
 
