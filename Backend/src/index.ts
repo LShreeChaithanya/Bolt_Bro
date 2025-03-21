@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 app.post("/template", async (req, res) => {
-  const prompt = req.body.prompt;
+  const prompt =req.body.prompt;
 
   const response = await fetch(
     "https://openrouter.ai/api/v1/chat/completions",
@@ -30,11 +30,10 @@ app.post("/template", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: prompt,
+            content: `Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.${prompt}`,
           },
         ],
-        system:
-          "Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.",
+        
         temperature: 0.2,
         max_tokens: 100,
       }),
@@ -44,7 +43,7 @@ app.post("/template", async (req, res) => {
   //console.log(JSON.stringify(data.choices[0].message, null, 2));
 
   //console.log("Reasoning: " + data.choices[0].message.reasoning);
-  //console.log("Content: " + data.choices[0].message.content);
+  console.log("Content: " + data.choices[0].message.content);
 
   const answer = data.choices[0].message.content.trim().toLowerCase();
   console.log(answer);
@@ -62,7 +61,7 @@ app.post("/template", async (req, res) => {
   if (answer === "node") {
     res.json({
       prompts: [
-        "The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n",
+        `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
       ],
       uiPrompts: [nodeBasePrompt],
     });
