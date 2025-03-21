@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// 
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Code, Eye, MessageSquare, File, ChevronRight, ChevronDown, Folder } from 'lucide-react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -18,6 +19,7 @@ const BuilderPage = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [fileStructure, setFileStructure] = useState<FileStructure[]>([
     {
       name: 'src',
@@ -32,44 +34,136 @@ const BuilderPage = () => {
             { 
               name: 'Header.tsx',
               type: 'file',
-              content: ``
+              content: `import React from 'react';
+
+interface HeaderProps {
+  title: string;
+  description?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ title, description }) => {
+  return (
+    <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl font-bold mb-2">{title}</h1>
+        {description && <p className="text-lg opacity-90">{description}</p>}
+      </div>
+    </header>
+  );
+};
+
+export default Header;`
             },
             { 
               name: 'Footer.tsx',
               type: 'file',
-              content: ``
+              content: `import React from 'react';
+
+const Footer: React.FC = () => {
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="bg-gray-900 text-white py-6">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center">
+          <p>&copy; {year} Your Company. All rights reserved.</p>
+          <div className="space-x-4">
+            <a href="#" className="hover:text-blue-400">Terms</a>
+            <a href="#" className="hover:text-blue-400">Privacy</a>
+            <a href="#" className="hover:text-blue-400">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;`
             },
           ]
         },
         { 
           name: 'App.tsx',
           type: 'file',
-          content: ``
+          content: `import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+
+function App() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header 
+        title="Welcome to Our Platform"
+        description="Build amazing web applications with ease"
+      />
+      
+      <main className="flex-1 container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold mb-4">Featured Content</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Add your content here */}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+export default App;`
         },
         { 
           name: 'main.tsx',
           type: 'file',
-          content: ``
+          content: `import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Failed to find root element');
+
+const root = createRoot(rootElement);
+
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);`
         },
       ]
-    },
-    { 
-      name: 'package.json',
-      type: 'file',
-      content: ``
-    },
-    { 
-      name: 'index.html',
-      type: 'file',
-      content: ``
-    },
+    }
   ]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (location.state?.prompt) {
+      setMessages([`Initial prompt: ${location.state.prompt}`]);
+    }
+  }, [location.state]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
-      setMessages([...messages, newMessage]);
-      setNewMessage('');
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost:3001/template', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: newMessage }),
+        });
+
+        const data = await response.json();
+        setMessages([...messages, newMessage]);
+        if (data.choices?.[0]?.message?.content) {
+          setMessages(prev => [...prev, data.choices[0].message.content]);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setIsLoading(false);
+        setNewMessage('');
+      }
     }
   };
 
@@ -200,13 +294,15 @@ const BuilderPage = () => {
               className="flex-1 px-4 py-2 bg-dark-gray/30 rounded-lg border border-gray-700/50 
                        focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 
                        transition-all duration-300 glass-effect"
+              disabled={isLoading}
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 
-                       transition-all duration-300 button-glow"
+              className={`px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 
+                       transition-all duration-300 button-glow ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={isLoading}
             >
-              <MessageSquare className="w-5 h-5" />
+              <MessageSquare className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
           </form>
         </div>

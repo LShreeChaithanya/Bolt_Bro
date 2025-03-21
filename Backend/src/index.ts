@@ -4,11 +4,20 @@ import express from "express";
 import fs from "fs";
 import { basePrompt as nodeBasePrompt } from "./defaults/node";
 import { basePrompt as reactBasePrompt } from "./defaults/react";
+import cors from "cors";
+const app = express();
+// Allow requests from the frontend
+app.use(cors({
+  origin: "http://localhost:3000", // replace with your frontend URL if different
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 require("dotenv").config();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // Output: <OPENROUTER_API_KEY>
 
-const app = express();
+
 
 app.use(express.json());
 
@@ -94,12 +103,12 @@ app.post("/chat", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: prompt,
+            content: message
           },
         ],
         system: getSystemPrompt(),
         temperature: 0.2,
-        max_tokens: 10,
+        max_tokens: 1000,
       }),
     }
   );
