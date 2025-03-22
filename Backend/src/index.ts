@@ -8,7 +8,7 @@ import cors from "cors";
 const app = express();
 // Allow requests from the frontend
 app.use(cors({
-origin: "http://localhost:5173", // replace with your frontend URL if different
+origin: "http://localhost:5174", // replace with your frontend URL if different
 methods: ["GET", "POST"],
 allowedHeaders: ["Content-Type", "Authorization"],
 }));

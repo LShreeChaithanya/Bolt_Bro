@@ -20,7 +20,7 @@ const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 // Allow requests from the frontend
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173", // replace with your frontend URL if different
+    origin: "http://localhost:5174", // replace with your frontend URL if different
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));
@@ -69,7 +69,7 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (answer === "node") {
         res.json({
             prompts: [
-                `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${react_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
+                `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${node_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
             ],
             uiPrompts: [node_1.basePrompt],
         });

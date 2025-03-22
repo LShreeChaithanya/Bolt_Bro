@@ -1,4 +1,3 @@
-// 
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Code, Eye, MessageSquare, File, ChevronRight, ChevronDown, Folder } from 'lucide-react';
@@ -134,9 +133,35 @@ root.render(
     }
   ]);
 
+  // On mount, if an initial prompt exists in location.state, send it directly to the server.
   useEffect(() => {
     if (location.state?.prompt) {
-      setMessages([`Initial prompt: ${location.state.prompt}`]);
+      const initialPrompt = location.state.prompt;
+      // Append user's initial prompt to messages
+      setMessages(prev => [...prev, `You: ${initialPrompt}`]);
+      setIsLoading(true);
+      fetch('http://localhost:3001/template', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: initialPrompt }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.choices?.[0]?.message?.content) {
+          setMessages(prev => [...prev, `Server: ${data.choices[0].message.content}`]);
+        } else {
+          setMessages(prev => [...prev, 'Server: No valid response.']);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        setMessages(prev => [...prev, 'Server: Error sending prompt.']);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
     }
   }, [location.state]);
 
@@ -144,22 +169,23 @@ root.render(
     e.preventDefault();
     if (newMessage.trim()) {
       setIsLoading(true);
+      // Append user's message
+      setMessages(prev => [...prev, `You: ${newMessage}`]);
       try {
         const response = await fetch('http://localhost:3001/template', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: newMessage }),
+          body: JSON.stringify({ prompt: newMessage }),
         });
-
         const data = await response.json();
-        setMessages([...messages, newMessage]);
         if (data.choices?.[0]?.message?.content) {
-          setMessages(prev => [...prev, data.choices[0].message.content]);
+          setMessages(prev => [...prev, `Server: ${data.choices[0].message.content}`]);
         }
       } catch (error) {
         console.error('Error:', error);
+        setMessages(prev => [...prev, 'Server: Error sending message.']);
       } finally {
         setIsLoading(false);
         setNewMessage('');
@@ -181,7 +207,6 @@ root.render(
       }
       return '';
     };
-
     return findContent(fileStructure, path.split('/'));
   };
 
