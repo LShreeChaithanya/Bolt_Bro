@@ -20,7 +20,7 @@ const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 // Allow requests from the frontend
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000", // replace with your frontend URL if different
+    origin: "http://localhost:5173", // replace with your frontend URL if different
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
 }));

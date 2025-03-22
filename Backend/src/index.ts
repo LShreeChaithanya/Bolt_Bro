@@ -8,9 +8,9 @@ import cors from "cors";
 const app = express();
 // Allow requests from the frontend
 app.use(cors({
-  origin: "http://localhost:3000", // replace with your frontend URL if different
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+origin: "http://localhost:5173", // replace with your frontend URL if different
+methods: ["GET", "POST"],
+allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 require("dotenv").config();
@@ -70,7 +70,7 @@ app.post("/template", async (req, res) => {
   if (answer === "node") {
     res.json({
       prompts: [
-        `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
+        `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${nodeBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
       ],
       uiPrompts: [nodeBasePrompt],
     });
