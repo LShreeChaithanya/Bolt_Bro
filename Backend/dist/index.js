@@ -16,9 +16,16 @@ const prompt_1 = require("./prompt");
 const express_1 = __importDefault(require("express"));
 const node_1 = require("./defaults/node");
 const react_1 = require("./defaults/react");
+const cors_1 = __importDefault(require("cors"));
+const app = (0, express_1.default)();
+// Allow requests from the frontend
+app.use((0, cors_1.default)({
+    origin: "http://localhost:5174", // replace with your frontend URL if different
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+}));
 require("dotenv").config();
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // Output: <OPENROUTER_API_KEY>
-const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const prompt = req.body.prompt;
@@ -35,10 +42,9 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             messages: [
                 {
                     role: "user",
-                    content: prompt,
+                    content: `Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.${prompt}`,
                 },
             ],
-            system: "Return node or react based on what you think this project should be. Only return a single word eg. 'node' or 'react' and nothing extra.",
             temperature: 0.2,
             max_tokens: 100,
         }),
@@ -46,7 +52,7 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const data = yield response.json();
     //console.log(JSON.stringify(data.choices[0].message, null, 2));
     //console.log("Reasoning: " + data.choices[0].message.reasoning);
-    //console.log("Content: " + data.choices[0].message.content);
+    console.log("Content: " + data.choices[0].message.content);
     const answer = data.choices[0].message.content.trim().toLowerCase();
     console.log(answer);
     if (answer === "react") {
@@ -63,7 +69,7 @@ app.post("/template", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (answer === "node") {
         res.json({
             prompts: [
-                "The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n",
+                `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${node_1.basePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
             ],
             uiPrompts: [node_1.basePrompt],
         });
@@ -91,12 +97,12 @@ app.post("/chat", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             messages: [
                 {
                     role: "user",
-                    content: prompt,
+                    content: message
                 },
             ],
             system: (0, prompt_1.getSystemPrompt)(),
             temperature: 0.2,
-            max_tokens: 10,
+            max_tokens: 1000,
         }),
     });
     console.log(response);

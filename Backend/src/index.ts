@@ -4,11 +4,20 @@ import express from "express";
 import fs from "fs";
 import { basePrompt as nodeBasePrompt } from "./defaults/node";
 import { basePrompt as reactBasePrompt } from "./defaults/react";
+import cors from "cors";
+const app = express();
+// Allow requests from the frontend
+app.use(cors({
+origin: "http://localhost:5174", // replace with your frontend URL if different
+methods: ["GET", "POST"],
+allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 require("dotenv").config();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // Output: <OPENROUTER_API_KEY>
 
-const app = express();
+
 
 app.use(express.json());
 
@@ -61,7 +70,7 @@ app.post("/template", async (req, res) => {
   if (answer === "node") {
     res.json({
       prompts: [
-        `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
+        `The following is a list of all project files and their complete contents that are currently visible and accessible to you.\n\n${nodeBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
       ],
       uiPrompts: [nodeBasePrompt],
     });
@@ -94,12 +103,12 @@ app.post("/chat", async (req, res) => {
         messages: [
           {
             role: "user",
-            content: prompt,
+            content: message
           },
         ],
         system: getSystemPrompt(),
         temperature: 0.2,
-        max_tokens: 10,
+        max_tokens: 1000,
       }),
     }
   );
